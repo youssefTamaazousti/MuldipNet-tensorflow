@@ -5,9 +5,7 @@ Code for the <a href="http://perso.ecp.fr/~tamaazouy/files/pdf/MuCaLe_Net_Multi_
 
 <h2>Prepare Data</h2>
 <code>
-x = 5;<br>
-y = 6;<br>
-z = x + y;
+test
 </code>
 
 <h2>Network Training</h2>
