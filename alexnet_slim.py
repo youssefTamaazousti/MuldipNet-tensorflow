@@ -1,8 +1,6 @@
 import numpy as np
 import tensorflow as tf
-
 import config as cfg
-#import config_test as cfg
 
 slim = tf.contrib.slim
 
@@ -38,7 +36,7 @@ class ALEXNET(object):
                       num_outputs=483,
                       keep_prob=0.5,
                       is_training=True,
-                      scope='alexnet' ): #device='/gpu:2'): with tf.device('/gpu:2'):
+                      scope='alexnet' ): 
         with tf.variable_scope(scope):
             with slim.arg_scope( [slim.conv2d, slim.fully_connected],
                                 #activation_fn=tf.nn.relu,
