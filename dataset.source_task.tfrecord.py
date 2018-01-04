@@ -6,18 +6,18 @@ import random
 ########################
 #      Parameters      #
 ########################
-for suffix in ['_Removing242']: #'_AddingGeneric100', '_Removing242']: 
+for suffix in ['_S', '_S_GroupingCategoricalLevels', '_S_GroupingHierarchicalLevels7', '_S_GroupingClusteringLevels100']:    
  source_task = True
- dataset = 'ilsvrc_half'
- dataset_name = '_S'+str(suffix) #'_S_GroupingHierarchicalLevels'+str(level) #'_S_Adding100' #'_S_GroupingCategoricalLevels' #'_S_Removing241' #'_S'
+ dataset = 'ilsvrc_half' # do it also for the 'ilsvrc_full' if you want to work with the complete ILSVRC dataset
+ dataset_name = suffix 
  dataset_name_spec = '_RandomCropAndFlip'
- phase = 'train' #'train'
- path_to_data = '/scratch_global/youssef/expes/gs_complementarity/transfer_learning/'+dataset+'/'
- txtname = path_to_data + dataset + dataset_name + '.' + phase + '.lab'
+ phase = 'train' # do it also for the 'test' phase if you want to evaluate test-perforamances on the source-task
+ path_to_data = '/data/'+dataset+'/'
+ txtname = path_to_data + 'lists/' + dataset + dataset_name + '.' + phase + '.lab'
  tfrecords_filename = path_to_data + 'tfrecord_files/tfrecord_files' + dataset_name + dataset_name_spec + '.'  + phase+'.bin'
 
  if phase == 'train':
-    mean_filename = path_to_data + 'mean_images/mean_image.'+dataset+ dataset_name  +'.txt'
+    mean_filename = path_to_data + 'mean_values/mean_values.'+dataset+ dataset_name  +'.txt'
     mean_image = np.zeros((256, 256, 3), dtype=np.float64)
 
  ########################
@@ -111,7 +111,6 @@ for suffix in ['_Removing242']: #'_AddingGeneric100', '_Removing242']:
      height = image.shape[0]
      width = image.shape[1]
 
-
      # Compute mean-image
      if phase == 'train':
         pil_image = Image.fromarray(image, 'RGB')
@@ -120,8 +119,6 @@ for suffix in ['_Removing242']: #'_AddingGeneric100', '_Removing242']:
            mean_image[:,:,c] += resized_image[:,:,c]
 
      annotation_raw = np.asarray(int(annotation_paths[i])) 
-     # TODO: if multi-label classification, store annotation_raw in a vector not one value
-     # TODO: deal with CMYK and GRAY images here 
     
      example = tf.train.Example(features=tf.train.Features(feature={
          'height': _int64_feature(height),
@@ -142,7 +139,6 @@ for suffix in ['_Removing242']: #'_AddingGeneric100', '_Removing242']:
     output_mean_file.write(str(mean_G)+'\n')
     output_mean_file.write(str(mean_B)+'\n')
     output_mean_file.close()
-
 
  writer.close()
 
