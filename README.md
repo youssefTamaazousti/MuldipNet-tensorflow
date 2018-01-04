@@ -1,7 +1,7 @@
 # MulDiPNet: Multi Discriminative Problem Network
 
 ## Introduction
-Code for the [CVPR'17 (MuCaLe-Net: Multi Categorical-Level Networks to Generate More Discriminating Features)]("http://perso.ecp.fr/~tamaazouy/files/pdf/MuCaLe_Net_Multi_Categorical_Level_Networks_to_Generate_More_Discriminating_Features.pdf) and [Learning More Universal Representations for Transfer-Learning]("http://perso.ecp.fr/~tamaazouy/files/pdf/Learning_More_Universal_Representations_for_Transfer_Learning.pdf") papers.
+Code for the [CVPR'17](http://perso.ecp.fr/~tamaazouy/files/pdf/MuCaLe_Net_Multi_Categorical_Level_Networks_to_Generate_More_Discriminating_Features.pdf) (MuCaLe-Net: Multi Categorical-Level Networks to Generate More Discriminating Features) and [ArXiv:2120918](http://perso.ecp.fr/~tamaazouy/files/pdf/Learning_More_Universal_Representations_for_Transfer_Learning.pdf) (Learning More Universal Representations for Transfer-Learning) papers.
 
 ## Source and Taget-Datasets Preparation
 `test`
