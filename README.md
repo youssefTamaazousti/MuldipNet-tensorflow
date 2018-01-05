@@ -3,6 +3,7 @@
 ## Introduction
 Code for the [CVPR'17](http://perso.ecp.fr/~tamaazouy/files/pdf/MuCaLe_Net_Multi_Categorical_Level_Networks_to_Generate_More_Discriminating_Features.pdf) (MuCaLe-Net: Multi Categorical-Level Networks to Generate More Discriminating Features) and [ArXiv:1712.09708](https://arxiv.org/pdf/1712.09708) (Learning More Universal Representations for Transfer-Learning) papers. 
 You can use this code with Tensorflow (gpu version) compiled. 
+If you want to work on CPU, remove all the "with tf.device('/gpu:'+str(cfg.GPU)):" lines from the code. 
 
 This code includes:
 - Code to convert datasets into Tensorflow [tfrecord format](https://www.tensorflow.org/programmers_guide/datasets) (it speeds-up the read of data and thus the training process). The python program  `convert2tfrecord.task.py` (with `task` being `source_task` or `target_task`) does this.
