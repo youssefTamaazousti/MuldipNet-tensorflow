@@ -21,7 +21,7 @@ python dataset.source_task.tfrecord.py
 python dataset.target_task.tfrecord.py
 ```
 This may take a while (especially for the source-task that contain a very large amount of images). 
-Anyway, it will output a tfrecord file (*e.g.*, `tfrecord_file.target_task_name.bin`) for each dataset that will be located in `data/tfrecord_files/`. 
+Anyway, it will output a tfrecord file (*e.g.*, `tfrecord_file.task_name.bin`) for each dataset that will be located in `data/tfrecord_files/`. For the source-task, it will also output a mean-values file (*e.g.*, `mean_values.source_task.txt`) located in `data/mean_values/`, containing the mean values (for each RGB channel) of the mean image computed on the whole training set.  
 Note that, the dataset lists have to be in the following format: two columns with the first column contains image-names with their absolute paths and second column contains their associated label. 
 An exemple of such a format is presented in the following:
 
