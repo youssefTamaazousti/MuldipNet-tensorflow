@@ -3,25 +3,16 @@ import os
 ###################
 # Data parameters #
 ###################
-DATASET_NAME = 'ilsvrc_half' #'ilsvrc_full'  
-DATASET_SPEC = '_S' #'_S_GroupingCategoricalLevels'  
+DATASET = 'ilsvrc_half' #'ilsvrc_full'  
+SOURCE_PROBLEM = '_S' #'_S_GroupingCategoricalLevels'  # TODO: list of SP in order to train them all one after the other
 IMAGES_SPEC = 'RandomCropAndFlip' 
-#TRAINING_STRATEGY = #'SFT_FC78_4k' #'PreTraining_G' #'PreTraining_G' #'FineTuning_FC78_2k' #'FineTuning_FC78_2k' #'FineTuning_FC678_FC78' #'FromScratch'
-NC = 577 #483 #24 #63 #100 #148 #194 #241 #483 #200 #583 #242 
+#TRAINING_STRATEGY = 'FromScratch' # TODO: 'standard'
+NUMBER_CATEGORIES = 483 #200 # TODO:  list in the same order than the list of SPs
 IMAGE_RESIZE = 256
-IMAGE_SIZE = 227
-GPU = '2' 
-BATCH_SIZE = 256
-ITER_MODEL = 500000
-
-################
-#  File-paths  #
-################
-DATA_PATH = '/data' 
-DATASET_PATH = os.path.join(DATA_PATH, DATASET_NAME)
-OUTPUT_DIR = os.path.join(DATASET_PATH, 'models'+DATASET_SPEC+'_'+IMAGES_SPEC)
-SAVE_FILE_NAME = 'model.'+str(DATASET_NAME)+str(DATASET_SPEC)+'.config_#classes='+str(NC)+'_imgSize='+str(IMAGE_SIZE)+'_imgSpec='+str(IMAGES_SPEC)+'.ckpt'
-WEIGHTS_FILE = None
+IMAGE_SIZE = 227 
+WEIGHTS_FILE = None 
+# if you want to start from a particular checkpoint, comment the previous line and uncomment the next one (also set the correct path to your model)
+#WEIGHTS_FILE = "path/to/your/trained/model.ckpt-500000" # here 500000 corresponds to the number of iterations of the pre-trained model
 
 ####################
 # Solver parameters
