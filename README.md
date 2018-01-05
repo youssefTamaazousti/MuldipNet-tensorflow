@@ -34,10 +34,20 @@ All the lists for each of the source-problem ILSVRC-half of the paper are includ
 ## Training MulDiP-Net
 
 in progress...
+```
+train_network.alexnet.source_task.py --architecture alexnet
+
+train_network.alexnet.source_task.py --architecture darknet
+```
 
 ## Extract Features Through Pre-Trained MulDiP-Net
 
 in progress...
+
+```
+python extract_features.alexnet.py --architecture alexnet
+python extract_features.alexnet.py --architecture darknet
+```
 
 ## Perform SPV (Source Problem Variation) 
 
