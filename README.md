@@ -49,7 +49,7 @@ in progress...
 python src/extract_features.target_tasks.py \
   --architecture darknet \
   --source_task_dataset ilsvrc_half \
-  --source_task_SP _S _S_GroupingCategoricalLevels _S_GroupingHierarchicalLevels _S_GroupingClusteringLevels \
+  --source_task_SP SP_INIT SPV_G_CAT SPV_G_HIE SPV_CLU \
   --model_iter 500000 \
   --target_task_dataset voc07 voc12 \
   --target_task_phase train test \
