@@ -4,7 +4,7 @@ import datetime
 import os
 from PIL import Image
 from glob import glob
-import config as cfg
+import config_training as cfg
 from time import gmtime, strftime
 
 def main():
