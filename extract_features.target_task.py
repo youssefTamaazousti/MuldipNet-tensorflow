@@ -9,8 +9,6 @@ from glob import glob
 from read_data_list import READ_DATA_LIST
 from time import gmtime, strftime
 
-from alexnet_slim_extraction import ALEXNET
-
 def main():
  
  ########################
