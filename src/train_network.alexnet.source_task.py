@@ -1,11 +1,16 @@
 import numpy as np
 import tensorflow as tf
 import datetime
-import os
 from PIL import Image
 from glob import glob
-import config_training as cfg
 from time import gmtime, strftime
+import os, sys, inspect
+# To import modules that are in the parent directory
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir)
+# import config file
+import utils.config_training as cfg
 
 def main():
     ##################
