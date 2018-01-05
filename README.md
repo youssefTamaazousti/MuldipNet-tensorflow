@@ -1,7 +1,14 @@
 # MulDiPNet: Multi Discriminative Problem Network
 
 ## Introduction
-Code for the [CVPR'17](http://perso.ecp.fr/~tamaazouy/files/pdf/MuCaLe_Net_Multi_Categorical_Level_Networks_to_Generate_More_Discriminating_Features.pdf) (MuCaLe-Net: Multi Categorical-Level Networks to Generate More Discriminating Features) and [ArXiv:2120918](http://perso.ecp.fr/~tamaazouy/files/pdf/Learning_More_Universal_Representations_for_Transfer_Learning.pdf) (Learning More Universal Representations for Transfer-Learning) papers.
+Code for the [CVPR'17](http://perso.ecp.fr/~tamaazouy/files/pdf/MuCaLe_Net_Multi_Categorical_Level_Networks_to_Generate_More_Discriminating_Features.pdf) (MuCaLe-Net: Multi Categorical-Level Networks to Generate More Discriminating Features) and [ArXiv:1712.09708](https://arxiv.org/pdf/1712.09708) (Learning More Universal Representations for Transfer-Learning) papers. 
+You can use this code with Tensorflow (gpu version) compiled. 
+
+This code includes:
+- Code to convert datasets into Tensorflow tfrecord binary formart (this speeds-up the training process). The python program  `convert2tfrecord.task.py` (with `task` being `source_task` or `target_task`) does this.
+- Code to train MulDiPNet on an arbitrary deep convolutional neural network provided in the Slim format of Tensorflow. The python program `train_network.source_task.architecture.py` (with `architecture` being `alexnet` or `darknet`) does this.
+- Code to extract feature from a pre-trained MulDiPNet. The python program `extract_features.architecture.py` (with `architecture` being `alexnet` or `darknet`) does this.
+
 
 ## Source and Target-Datasets Preparation
 Roughly, here we convert the raw images and their associated labels to the tfrecord format [(see here for detailed explanation)](todo:link). We also compute the mean-image on the training set and store their mean values (for each RGB channel) in a file. 
