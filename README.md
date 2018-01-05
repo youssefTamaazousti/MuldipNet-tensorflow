@@ -46,8 +46,18 @@ in progress...
 
 ```
 python extract_features.alexnet.py --architecture alexnet
-python extract_features.alexnet.py --architecture darknet
+python extract_features.alexnet.py \
+  --architecture darknet \
+  --source_task_dataset ilsvrc_half \
+  --source_task_SP _S _S_GroupingCategoricalLevels _S_GroupingHierarchicalLevels _S_GroupingClusteringLevels \
+  --model_iter 500000 \
+  --target_task_dataset voc07 voc12 \
+  --target_task_phase train test \
+  --layer2extract fc_7 \
+  --gpu 0
 ```
+This will output a set of feature files (i.e., as many files as the amoung of source-problems considered). 
+Each features file contain N lines and D columns, with N being the amoung of images in your dataset (*e.g.*, `N=5,011` for the training set of VOC 2007) and D being the dimensionality of the layer extracted (*e.g.*, `D=4,096` for the fc7 layer of AlexNet).
 
 ## Perform SPV (Source Problem Variation) 
 
