@@ -1,29 +1,44 @@
 from __future__ import division
 import numpy as np
 import tensorflow as tf
-
 import datetime
 import os
 import argparse
-
 from PIL import Image
 from glob import glob
-
-from alexnet_slim_extraction import ALEXNET
 from read_data_list import READ_DATA_LIST
 from time import gmtime, strftime
 
+from alexnet_slim_extraction import ALEXNET
+
 def main():
+ 
  ########################
  #      Parameters      #
  ########################
- gpu = 3
- with tf.device('/gpu:'+str(gpu)):
+ # Declare argument-parser 
+ parser = argparse.ArgumentParser()
+ parser.add_argument('--architecture', default='alexnet', type=str)
+ parser.add_argument('--gpu', default=0, type=int)
+ # TODO:
+ #layer_to_extract
+ #target_dataset
+ #phase
+ 
+ args = parser.parse_args()
+ # Get the network-architecture from the arguments (if no argument, alexnet is used by default) 
+ if args.architecture=="alexnet":
+    from alexnet_slim import NET
+ elif args.architecture=="darknet":
+    from darknet_slim import NET
+ print("architecture = "+str(args.architecture))
+ 
+ with tf.device('/gpu:'+str(args.gpu)):
      layer_to_extract = 'fc_7' 
      nbr_classes = 577
      data_transformation = 1
      # Declare network (AlexNet)
-     network = ALEXNET(name_layer2extract=layer_to_extract, output_size=nbr_classes)
+     network = NET(name_layer2extract=layer_to_extract, output_size=nbr_classes)
      variable_to_restore = tf.global_variables() # for finetuning on same database
      saver4restoring = tf.train.Saver(variable_to_restore, max_to_keep=None) # saver for restoring variable_to_restore
      global_step = tf.get_variable('global_step', [], initializer=tf.constant_initializer(0), trainable=False)
@@ -89,7 +104,7 @@ def main():
 
     images = image #tf.train.batch([image], batch_size=1, capacity=30, num_threads=1)
 
-    with tf.device('/gpu:'+str(gpu)):
+    with tf.device('/gpu:'+str(args.gpu)):
      # Declare network (AlexNet)
      #network = ALEXNET(name_layer2extract=layer_to_extract, output_size=nbr_classes)
         
@@ -101,7 +116,7 @@ def main():
      saver4restoring = tf.train.Saver(variable_to_restore, max_to_keep=None) # saver for restoring variable_to_restore
      global_step = tf.get_variable('global_step', [], initializer=tf.constant_initializer(0), trainable=False)
      """
-    with tf.device('/gpu:'+str(gpu)):
+    with tf.device('/gpu:'+str(args.gpu)):
      #global_step = tf.get_variable('global_step', [], initializer=tf.constant_initializer(0), trainable=False)
 
      sess = tf.InteractiveSession()
