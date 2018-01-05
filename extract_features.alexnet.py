@@ -18,27 +18,34 @@ def main():
  ########################
  # Declare argument-parser 
  parser = argparse.ArgumentParser()
- parser.add_argument('--architecture', default='alexnet', type=str)
- parser.add_argument('--gpu', default=0, type=int)
+ parser.add_argument('--architecture', type=str, default='alexnet', help='Name of the network-architecture to use')
+ parser.add_argument('--source_task_dataset', type=str, default='ilsvrc_half', help='Name of the dataset used for the pre-trained network')
+ parser.add_argument('--source_task_SP', type=str, nargs='+', default=['_S', '_S_GroupingCategoricalLevels'], help='Name of the source-problem (SP) used for the pre-trained network')
+ parser.add_argument('--model_iter', type=int, default=500000, help='Number of iterations on which the source-task model was saved')
+ parser.add_argument('--target_task_dataset', type=str, nargs='+', default=['voc07', 'voc12'], help='Name of the target-datasets on which we want to extract features')
+ parser.add_argument('--target_task_phase', type=str, nargs='+', default=['train', 'test'], help='Name of the target-datasets on which we want to extract features')
+ parser.add_argument('--layer2extract', type=str, default='fc_7', help='Name of the layer of the network to extract')
+ parser.add_argument('--gpu', type=int, default=0, help='GPU device on which are declared the variables')
  # TODO:
- #layer_to_extract
- #target_dataset
- #phase
- #source_dataset
- #source_dataset_name
- #weights_iter
+ #source_dataset > source_task_dataset
+ #source_dataset_name > source_task_SP
+ #weights_iter > model_iter
+ #target_dataset > target_task_dataset
+ #phase > target_task_phase
+ #layer_to_extract > layer2extract
+ #gpu
  
  args = parser.parse_args()
  # Get the network-architecture from the arguments (if no argument, alexnet is used by default) 
  if args.architecture=="alexnet":
-    from alexnet_slim import NET
+    from architecture_alexnet_forTraining import NET
  elif args.architecture=="darknet":
-    from darknet_slim import NET
+    from architecture_darknet_forTraining import NET
  print("architecture = "+str(args.architecture))
  
  # Parameters of pre-trained nework
- source_dataset = 'ilsvrc_half' #'ilsvrc_half'
- source_dataset_name = '_S_GroupingCategoricalLevels' #'_S_GroupingCategoricalLevels' #'_S_GroupingHierarchicalLevels5' #'_S_Adding100' #'_S_GroupingCategoricalLevels' #'_S_Removing241' #'_S' #'_S_GroupingHierarchicalLevels7'
+ source_task_dataset = args.source_task_dataset #'ilsvrc_half' 
+ source_task_SP = args.source_task_SP #'_S_GroupingCategoricalLevels' #'_S_GroupingCategoricalLevels' #'_S_GroupingHierarchicalLevels5' #'_S_Adding100' #'_S_GroupingCategoricalLevels' #'_S_Removing241' #'_S' #'_S_GroupingHierarchicalLevels7'
  source_dataset_name_spec = '_RandomCropAndFlip'
  training_strategy = '' #'_FS' FS means training From Scratch #'_FineTuning_FC78_2k'
  weights_iter = 500000 
@@ -56,6 +63,7 @@ def main():
      
  for target_dataset in ['voc07', 'voc12', 'mit67', 'ca101', 'ca256', 'cub200', 'nwOB', 'stACT', 'stCAR', 'fl102']: #['stACT', 'fl102', 'stCAR', 'voc12', 'ca256']: #['voc07', 'mit67', 'ca101', 'ca256', 'cub200', 'nwOB', 'voc12', 'stCAR']: # ilsvrc_half
   for phase in ['train', 'test']:
+    # TODO: loop for source_task_SP: for source_task_SP in args.source_task_SP:
     print ('Extracting features for '+phase+' phase of '+target_dataset+' dataset')
 
     #######################
