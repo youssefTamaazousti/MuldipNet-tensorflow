@@ -17,8 +17,8 @@ Roughly, here we convert the raw images and their associated labels to the tfrec
 
 To do so, simply run the following commands (with the first command converting the source-datasets and the second, converting the target-ones):
 ```
-python dataset.source_task.tfrecord.py
-python dataset.target_task.tfrecord.py
+python src/dataset.source_tasks.tfrecord.py
+python src/dataset.target_tasks.tfrecord.py
 ```
 This may take a while (especially for the source-task that contain a very large amount of images). 
 Anyway, it will output a tfrecord file (*e.g.*, `tfrecord_file.task_name.bin`) for each dataset that will be located in `data/tfrecord_files/`. For the source-task, it will also output a mean-values file (*e.g.*, `mean_values.source_task.txt`) located in `data/mean_values/`, containing the mean values (for each RGB channel) of the mean image computed on the whole training set.  
@@ -29,15 +29,16 @@ An exemple of such a format is presented in the following:
 /path/to/raw/images/name_image_1.jpg 0
 /path/to/raw/images/name_image_1.jpg 1
 ```
-
 All the lists for each of the source-problem ILSVRC-half of the paper are included in the `data/ilsvrc_half/lists` folder.
 
 ## Training MulDiP-Net
 
 in progress...
 ```
-train_network.alexnet.source_task.py --architecture alexnet
-train_network.alexnet.source_task.py --architecture darknet
+src/train_network.alexnet.source_tasks.py \
+  --architecture darknet \
+  --batch_size 256 \
+  --gpu 0
 ```
 
 ## Extract Features Through Pre-Trained MulDiP-Net
@@ -45,8 +46,7 @@ train_network.alexnet.source_task.py --architecture darknet
 in progress...
 
 ```
-python extract_features.alexnet.py --architecture alexnet
-python extract_features.alexnet.py \
+python src/extract_features.target_tasks.py \
   --architecture darknet \
   --source_task_dataset ilsvrc_half \
   --source_task_SP _S _S_GroupingCategoricalLevels _S_GroupingHierarchicalLevels _S_GroupingClusteringLevels \
