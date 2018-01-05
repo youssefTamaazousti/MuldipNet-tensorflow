@@ -17,9 +17,9 @@ def main():
     args = parser.parse_args()
     # Get the network-architecture from the arguments (if no argument, alexnet is used by default) 
     if args.architecture=="alexnet":
-       from alexnet_slim import NET
+       from architecture_alexnet_forTraining import NET
     elif args.architecture=="darknet":
-       from darknet_slim import NET
+       from architecture_darknet_forTraining import NET
     print("architecture = "+str(args.architecture))
     
     dataset_name = cfg.DATASET_NAME
