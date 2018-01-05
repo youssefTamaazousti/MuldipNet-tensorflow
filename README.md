@@ -36,7 +36,6 @@ All the lists for each of the source-problem ILSVRC-half of the paper are includ
 in progress...
 ```
 train_network.alexnet.source_task.py --architecture alexnet
-
 train_network.alexnet.source_task.py --architecture darknet
 ```
 
