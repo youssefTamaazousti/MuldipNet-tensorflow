@@ -2,19 +2,14 @@ import numpy as np
 import tensorflow as tf
 import datetime
 import os
-import argparse
 from PIL import Image
 from glob import glob
 
 import config as cfg
-from alexnet_slim import NET
+from architecture_alexnet_forTraining import NET
 from time import gmtime, strftime
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--dataset_name', type=str)
-    parser.add_argument('--gpu', type=str)
-    args = parser.parse_args()
 
     ##################
     #   Parameters   #
@@ -25,7 +20,6 @@ def main():
     path_training_source_task = '/data/'
     path_data = dataset_name+'/'
 
-    # Parameters from the config file
     display_iter = cfg.DISPLAY_ITER
     max_iter = cfg.MAX_ITER
     test_iter = cfg.TEST_ITER
@@ -153,11 +147,10 @@ def main():
           loss = sess.run(cost_function, feed_dict=feed_dict_test)
           acc = round(accuracy.eval(feed_dict=feed_dict_test),2)
           print("Iteration: "+ str(step)+" - Loss: "+ str(loss) + " - Batch-Accuracy: " + str(acc))
-            
-       # Perform the optimization
+       # Perform optimization
        sess.run(train_op, feed_dict=feed_dict)
 
-       # Saving the model 
+       # Save the model 
        if step % save_iter == 0:
           f = open(log_file, 'a')
           print('Saving weights-file to: ' + str(ckpt_file) + '\n')
