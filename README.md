@@ -19,9 +19,15 @@ Note that, the dataset lists have to be in the following format (path to images 
 /path/to/raw/images/name_image_1.jpg 1
 ```
 
+in progress...
+
 ## Networks Training
 
+in progress...
+
 ## Features Extraction
+
+in progress...
 
 ## Citations
 If you find the codes useful, please cite these papers:
