@@ -24,6 +24,9 @@ def main():
  #layer_to_extract
  #target_dataset
  #phase
+ #source_dataset
+ #source_dataset_name
+ #weights_iter
  
  args = parser.parse_args()
  # Get the network-architecture from the arguments (if no argument, alexnet is used by default) 
@@ -32,6 +35,14 @@ def main():
  elif args.architecture=="darknet":
     from darknet_slim import NET
  print("architecture = "+str(args.architecture))
+ 
+ # Parameters of pre-trained nework
+ source_dataset = 'ilsvrc_half' #'ilsvrc_half'
+ source_dataset_name = '_S_GroupingCategoricalLevels' #'_S_GroupingCategoricalLevels' #'_S_GroupingHierarchicalLevels5' #'_S_Adding100' #'_S_GroupingCategoricalLevels' #'_S_Removing241' #'_S' #'_S_GroupingHierarchicalLevels7'
+ source_dataset_name_spec = '_RandomCropAndFlip'
+ training_strategy = '' #'_FS' FS means training From Scratch #'_FineTuning_FC78_2k'
+ weights_iter = 500000 
+ batch_size = 1
  
  with tf.device('/gpu:'+str(args.gpu)):
      layer_to_extract = 'fc_7' 
@@ -42,43 +53,38 @@ def main():
      variable_to_restore = tf.global_variables() # for finetuning on same database
      saver4restoring = tf.train.Saver(variable_to_restore, max_to_keep=None) # saver for restoring variable_to_restore
      global_step = tf.get_variable('global_step', [], initializer=tf.constant_initializer(0), trainable=False)
-
+     
  for target_dataset in ['voc07', 'voc12', 'mit67', 'ca101', 'ca256', 'cub200', 'nwOB', 'stACT', 'stCAR', 'fl102']: #['stACT', 'fl102', 'stCAR', 'voc12', 'ca256']: #['voc07', 'mit67', 'ca101', 'ca256', 'cub200', 'nwOB', 'voc12', 'stCAR']: # ilsvrc_half
   for phase in ['train', 'test']:
     print ('Extracting features for '+phase+' phase of '+target_dataset+' dataset')
-    # Parameters of nework learned on source-task
-    source_dataset = 'ilsvrc_half' #'ilsvrc_half'
-    source_dataset_name = '_S_AddingGeneric100' #'_S_GroupingCategoricalLevels' #'_S_GroupingHierarchicalLevels5' #'_S_Adding100' #'_S_GroupingCategoricalLevels' #'_S_Removing241' #'_S' #'_S_GroupingHierarchicalLevels7'
-    source_dataset_name_spec = '_RandomCropAndFlip'
-    training_strategy = '' #'_PreTraining_G' #'_FineTuning_FC78_2k' #'_FineTuning_FC678_FC78'
-    weights_iter = 130000 #430000 #450000 #310000
-    batch_size = 1
 
-    # inferred parameters
+    #######################
+    # Inferred Parameters #
+    #######################
+    # Paths
     path_to_source_data = '/scratch_global/youssef/expes/gs_complementarity/transfer_learning/' + source_dataset +'/'
     path_to_target_data = '/scratch_global/youssef/expes/gs_complementarity/transfer_learning/' + target_dataset +'/'
     weights_file = path_to_source_data + 'modelss'+source_dataset_name+source_dataset_name_spec+'/model.'+source_dataset+source_dataset_name+'.config_#classes='+str(nbr_classes)+'_imgSize=227_imgSpec='+source_dataset_name_spec[1:]+training_strategy+'.ckpt-'
     weights_file += str(weights_iter)
-    #output_file_name = path_to_target_data + 'features_TF/'+target_dataset+'.'+phase+'.FS.'+layer_to_extract+'.cnn'+source_dataset_name+source_dataset_name_spec+'.alexnet.'+str(int(weights_iter/1000))+'kIter.txt'
     output_file_name = path_to_target_data + 'features_TF/'+target_dataset+'.'+phase+'.FS.'+layer_to_extract+'.cnn'+source_dataset_name+source_dataset_name_spec+training_strategy+'.alexnet_full.'+str(int(weights_iter/1000))+'kIter.txt'
-
-    # Getting amount of images 
-    list_filename = path_to_target_data + target_dataset + '.' + phase + '.S0.lst' # TODO: a remetter
-    #list_filename = path_to_target_data + source_dataset+source_dataset_name+ '.' + phase + '.lab' # TODO: a virer
+    # Amount of images in target-dataset
+    list_filename = path_to_target_data + target_dataset + '.' + phase + '.lst'
     with open(list_filename, 'r') as list_file:
         list_image = [x.strip() for x in list_file.readlines()]
     nbr_total_img = int(len(list_image))
-
-    # Reading mean-image
+    
+    #######################
+    # Reading mean-values #
+    #######################
     mean_filename = path_to_source_data+ 'mean_images/mean_image.'+ source_dataset + source_dataset_name +'.txt'
     with open(mean_filename, 'r') as mean_file:
        mean_image = [x.strip() for x in mean_file.readlines()]
 
-    # Reading tf-records file
-    tfrecords_filename = path_to_target_data + 'tfrecord_files/tfrecord_files'+ target_dataset + '.' + phase + '.bin' # TODO: a remetter
-    #tfrecords_filename = path_to_target_data + 'tfrecord_files/tfrecord_files_S'+ source_dataset_name_spec + '.' + phase + '4extraction.bin' # TODO: a virer
+    ###########################
+    # Reading tf-records file #
+    ###########################
+    tfrecords_filename = path_to_target_data + 'tfrecord_files/tfrecord_files'+ target_dataset + '.' + phase + '.bin' 
     filename_queue = tf.train.string_input_producer([tfrecords_filename]) #, num_epochs=1) #shuffle=False) 
- 
     feature = {
        'height': tf.FixedLenFeature([], tf.int64, default_value=-1),
        'width': tf.FixedLenFeature([], tf.int64, default_value=-1),
@@ -104,10 +110,7 @@ def main():
 
     images = image #tf.train.batch([image], batch_size=1, capacity=30, num_threads=1)
 
-    with tf.device('/gpu:'+str(args.gpu)):
-     # Declare network (AlexNet)
-     #network = ALEXNET(name_layer2extract=layer_to_extract, output_size=nbr_classes)
-        
+    with tf.device('/gpu:'+str(args.gpu)):        
      ######################
      # Declare parameters #
      ###################### 
@@ -146,9 +149,9 @@ def main():
        output_descriptor = np.asarray(sess.run(network.logits, feed_dict=feed_dict_test))
        #print(output_descriptor.shape)
        
-       ####################################
-       # Output descriptors in ASCII file #
-       ####################################
+       #####################################
+       # Writing descriptors in ASCII file #
+       #####################################
        # convolutional/pooling features (TODO: flatten of matrices)
 
        # fully-connected features (vectors)
@@ -160,7 +163,6 @@ def main():
        output_file.write('\n')
 
     output_file.close()
-    #tf.QueueBase.close()
     # Stop the threads
     coord.request_stop()
     # Wait for threads to stop
@@ -168,6 +170,5 @@ def main():
     sess.close()
 
 if __name__ == '__main__':
-
     main()
 
