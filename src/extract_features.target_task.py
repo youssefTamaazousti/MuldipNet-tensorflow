@@ -6,7 +6,6 @@ import os
 import argparse
 from PIL import Image
 from glob import glob
-from read_data_list import READ_DATA_LIST
 from time import gmtime, strftime
 
 def main():
