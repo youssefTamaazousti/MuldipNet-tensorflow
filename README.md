@@ -6,8 +6,8 @@ You can use this code with Tensorflow (gpu version) compiled.
 
 This code includes:
 - Code to convert datasets into Tensorflow tfrecord binary formart (this speeds-up the training process). The python program  `convert2tfrecord.task.py` (with `task` being `source_task` or `target_task`) does this.
-- Code to train MulDiPNet on an arbitrary deep convolutional neural network provided in the Slim format of Tensorflow. The python program `train_network.source_task.architecture.py` (with `architecture` being `alexnet` or `darknet`) does this.
-- Code to extract feature from a pre-trained MulDiPNet. The python program `extract_features.architecture.py` (with `architecture` being `alexnet` or `darknet`) does this.
+- Code to train MulDiPNet on an arbitrary deep convolutional neural network provided in the [Slim format](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/contrib/slim) of Tensorflow. This is performed by the python program `train_network.source_task.architecture.py` (with `architecture` being `alexnet` or `darknet`).
+- Code to extract features from any target-dataset (that has to be converted in tfrecord format) through a pre-trained MulDiPNet. This is performed by the python program `extract_features.architecture.py` (with `architecture` being `alexnet` or `darknet`).
 
 
 ## Source and Target-Datasets Preparation
@@ -36,7 +36,7 @@ in progress...
 
 in progress...
 
-## Citations
+## References
 If you find the codes useful, please cite these papers:
 ```
 @article{tamaazousti2018universal,
