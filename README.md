@@ -10,7 +10,7 @@ This code includes:
 - Code to extract features from any target-dataset (that has to be converted in tfrecord format) through a pre-trained MulDiPNet. This is performed by the python program `extract_features.architecture.py` (with `architecture` being `alexnet` or `darknet`).
 
 
-## Source and Target-Datasets Preparation
+## Converting (Source and Target) Datasets to Tfrecord Format
 Roughly, here we convert the raw images and their associated labels to the tfrecord format [(see here for detailed explanation)](todo:link). We also compute the mean-image on the training set and store their mean values (for each RGB channel) in a file. 
 
 To do so, simply run the following commands (with the first command converting the source-datasets and the second, converting the target-ones):
@@ -28,15 +28,15 @@ Note that, the dataset lists have to be in the following format (path to images 
 
 in progress...
 
-## Networks Training
+## Training MulDiP-Net
 
 in progress...
 
-## Features Extraction
+## Extract Features Through Pre-Trained MulDiP-Net
 
 in progress...
 
-## References
+## Citation
 If you find the codes useful, please cite these papers:
 ```
 @article{tamaazousti2018universal,
