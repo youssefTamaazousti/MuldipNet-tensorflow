@@ -4,16 +4,24 @@ import datetime
 import os
 from PIL import Image
 from glob import glob
-
 import config as cfg
-from architecture_alexnet_forTraining import NET
 from time import gmtime, strftime
 
 def main():
-
     ##################
     #   Parameters   #
     ##################
+    # Declare argument-parser 
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--architecture', default='alexnet', type=str)
+    args = parser.parse_args()
+    # Get the network-architecture from the arguments (if no argument, alexnet is used by default) 
+    if args.architecture=="alexnet":
+       from alexnet_slim import NET
+    elif args.architecture=="darknet":
+       from darknet_slim import NET
+    print("architecture = "+str(args.architecture))
+    
     dataset_name = cfg.DATASET_NAME
     dataset_spec = cfg.DATASET_SPEC
     dataset_image_spec = cfg.IMAGES_SPEC
@@ -80,6 +88,7 @@ def main():
     # Create batches by randomly shuffling tensors
     images, annotations = tf.train.batch([image, label_to_feed], batch_size=batch_size, capacity=30, num_threads=3) # you can set the num_threads variable to a higher value for speeding-up the learning process
     
+    # Working on gpu device (if you want to work on CPU, remove the "with tf.device('/gpu:'+str(cfg.GPU)):" lines)
     with tf.device('/gpu:'+str(cfg.GPU)):
      # Declare network
      network = NET()
