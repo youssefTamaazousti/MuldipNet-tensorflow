@@ -18,26 +18,23 @@ def main():
     ##################
     # Declare argument-parser 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--architecture', default='alexnet', type=str)
+    parser.add_argument('--architecture', type=str, default='alexnet', help='Name of the network-architecture to use')
+    parser.add_argument('--batch_size', type=int, default=256, help='Amount of data used in mini-batch')
+    parser.add_argument('--gpu', type=int, default=0, help='GPU device on which are declared the variables')
     args = parser.parse_args()
-    # Get the network-architecture from the arguments (if no argument, alexnet is used by default) 
+    # Get the network-architecture from the arguments  
     if args.architecture=="alexnet":
-       from architecture_alexnet_forTraining import NET
+       from utils.architecture_alexnet_forTraining import NET
     elif args.architecture=="darknet":
-       from architecture_darknet_forTraining import NET
+       from utils.architecture_darknet_forTraining import NET
     print("architecture = "+str(args.architecture))
     
-    dataset_name = cfg.DATASET_NAME
-    dataset_spec = cfg.DATASET_SPEC
-    dataset_image_spec = cfg.IMAGES_SPEC
-    path_training_source_task = '/data/'
-    path_data = dataset_name+'/'
-
+    dataset = cfg.DATASET
+    source_problem = cfg.SOURCE_PROBLEM
+    images_spec = cfg.IMAGES_SPEC
     display_iter = cfg.DISPLAY_ITER
     max_iter = cfg.MAX_ITER
-    test_iter = cfg.TEST_ITER
     save_iter = cfg.SAVE_ITER
-    batch_size = cfg.BATCH_SIZE
     weights_file = cfg.WEIGHTS_FILE
     image_resize = cfg.IMAGE_RESIZE
     image_size = cfg.IMAGE_SIZE
@@ -46,11 +43,19 @@ def main():
     decay_rate = cfg.DECAY_RATE
     staircase = cfg.STAIRCASE
     momentum = cfg.MOMENTUM
-    nc = cfg.NC
-    save_file_name = cfg.SAVE_FILE_NAME
+    number_categories = cfg.NUMBER_CATEGORIES
 
+    # Infer paths and output file names
+    path_data = '../data/'+dataset+'/'
+    output_models_dir = path_data + 'models/' + 'models.'+dataset+'.'+source_problem+'/'
+    # Check if directory exists and create one if it doesn't:
+    if not os.path.isdir(output_models_dir):
+       os.makedirs(output_models_dir)
+    output_model = output_models_dir + model.'+dataset+'_'+source_problem+'_'+images_spec+'.config.number_categories='+str(number_categories)+'_imgSize='+str(IMAGE_SIZE)+'_imgSpec='+str(IMAGES_SPEC)+'.ckpt'
+    mean_values_filename = path_data + 'mean_values/mean_values.'+ dataset_name + dataset_spec  +'.txt'
+    tfrecords_filename = path_data +'tfrecord_files/tfrecord_files'+dataset_spec +'_'+dataset_image_spec +'.train.bin'
+    
     # Reading mean-values
-    mean_values_filename = path_data + 'mean_values/mean_values.'+dataset_name + dataset_spec  +'.txt'
     with open(mean_values_filename, 'r') as mean_values_file:
        mean_values = [x.strip() for x in mean_values_file.readlines()]  
     R_mean = float(mean_values[0])
@@ -60,7 +65,6 @@ def main():
     ###########################
     # READING TF-RECORD files #
     ###########################
-    tfrecords_filename = path_data +'tfrecord_files/tfrecord_files'+dataset_spec +'_'+dataset_image_spec +'.train.bin'  
     filename_queue = tf.train.string_input_producer([tfrecords_filename]) #, num_epochs=90) #shuffle=True)
 
     feature = {
@@ -87,14 +91,14 @@ def main():
     mean = tf.reshape(mean, [1, 1, 3])
     image = image - mean
     
-    label_to_feed = tf.one_hot(label, nc, on_value=1, off_value=0)
+    label_to_feed = tf.one_hot(label, number_categories, on_value=1, off_value=0)
     label_to_feed = tf.cast(label_to_feed, tf.float32)
 
     # Create batches by randomly shuffling tensors
-    images, annotations = tf.train.batch([image, label_to_feed], batch_size=batch_size, capacity=30, num_threads=3) # you can set the num_threads variable to a higher value for speeding-up the learning process
+    images, annotations = tf.train.batch([image, label_to_feed], batch_size=args.batch_size, capacity=30, num_threads=3) # you can set the num_threads variable to a higher value for speeding-up the learning process
     
-    # Working on gpu device (if you want to work on CPU, remove the "with tf.device('/gpu:'+str(cfg.GPU)):" lines)
-    with tf.device('/gpu:'+str(cfg.GPU)):
+    # Working on gpu device (if you want to work on CPU, remove the "with tf.device('/gpu:'+str(args.gpu)):" lines)
+    with tf.device('/gpu:'+str(args.gpu)):
      # Declare network
      network = NET()
 
@@ -108,8 +112,7 @@ def main():
     # Declare the saver for saving all trainable variables 
     saver4saving = tf.train.Saver(max_to_keep=None)
     
-    with tf.device('/gpu:'+str(cfg.GPU)):
-     ckpt_file = os.path.join(cfg.OUTPUT_DIR, save_file_name)
+    with tf.device('/gpu:'+str(args.gpu)):
      global_step = tf.get_variable('global_step', [], initializer=tf.constant_initializer(0), trainable=False) 
      learning_rate = tf.train.exponential_decay(
         initial_learning_rate, global_step, decay_steps,
@@ -167,8 +170,8 @@ def main():
        # Save the model 
        if step % save_iter == 0:
           f = open(log_file, 'a')
-          print('Saving weights-file to: ' + str(ckpt_file) + '\n')
-          saver4saving.save(sess, ckpt_file, global_step=int(step))
+          print('Saving weights-file to: ' + str(output_model) + '\n')
+          saver4saving.save(sess, output_model, global_step=int(step))
 
     coord.request_stop()
     coord.join(threads)
