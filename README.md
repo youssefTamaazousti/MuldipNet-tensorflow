@@ -33,21 +33,22 @@ All the lists for each of the source-problem ILSVRC-half of the paper are includ
 
 ## Training MulDiP-Net
 
-in progress...
+Once the source-tasks data are prepared and converted in tfrecord, we can train the MulDiP-Net, for each source-task as follow:
 ```
-src/train_network.alexnet.source_tasks.py \
+python src/train_network.alexnet.source_tasks.py \
   --architecture darknet \
   --batch_size 256 \
   --gpu 0
 ```
+The latter command has to be run for each source-problem. To set the source-problems as well as other parameters, you should modify the following config file: `utils/config.py` .
+During training, the latter program will save a model every `SAVE_ITER` (see config file) iterations and will print the loss and accuracy on a training-batch every `DISP_ITER` iterations. 
 
 ## Extract Features Through Pre-Trained MulDiP-Net
 
-in progress...
-
+Once the MulDiP-Net is trained on the source-tasks, we can use it to extract features on target-tasks as follow: 
 ```
 python src/extract_features.target_tasks.py \
-  --architecture darknet \
+  --architecture alexnet \
   --source_task_dataset ilsvrc_half \
   --source_task_SP SP_INIT SPV_G_CAT SPV_G_HIE SPV_CLU \
   --model_iter 500000 \
@@ -56,8 +57,21 @@ python src/extract_features.target_tasks.py \
   --layer2extract fc_7 \
   --gpu 0
 ```
-This will output a set of feature files (i.e., as many files as the amoung of source-problems considered). 
-Each features file contain N lines and D columns, with N being the amoung of images in your dataset (*e.g.*, `N=5,011` for the training set of VOC 2007) and D being the dimensionality of the layer extracted (*e.g.*, `D=4,096` for the fc7 layer of AlexNet).
+Here with the source-tasks being `SP_INIT SPV_G_CAT SPV_G_HIE SPV_CLU`, the latter code will output a set of four feature files (i.e., as many files as the amount of source-problems considered). 
+Each features file contain N lines and D columns, with N being the amoung of images in your dataset (*e.g.*, `N=5011` for the training set of VOC 2007) and D being the dimensionality of the layer extracted (*e.g.*, `D=4096` for the fc7 layer of AlexNet).
+Then, these features are independently normalized and combined with the following:
+```
+python src/combine_normalize_features.target_tasks.py \
+  --architecture alexnet \
+  --source_task_dataset ilsvrc_half \
+  --source_task_SP SP_INIT SPV_G_CAT SPV_G_HIE SPV_CLU \
+  --model_iter 500000 \
+  --target_task_dataset voc07 voc12 \
+  --target_task_phase train test \
+  --normalization Linf \
+  --combination concat
+```
+This latter will take as input the set of four feature files and output one features file containing the normalized and combined features.
 
 ## Perform SPV (Source Problem Variation) 
 
