@@ -1,4 +1,3 @@
-0a
 Band_Aid
 French_horn
 Windsor_tie
@@ -40,6 +39,7 @@ bridge
 bucket
 buffalo
 burrito
+bus
 butterfly
 camel
 camera
